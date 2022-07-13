@@ -6,4 +6,4 @@ This is a repository for notebooks on applying optimization to materials experim
 3. Problems defined in materials experiments usually have a small evaluation budget due to practical limitations such as costs/time to synthesize and characterize, usually in the range of 10^0 to 10^2 data points.
 4. Parallelization/batch sampling is usually limited to a relatively small number of 2-12, based on the high-throughput set up.
 5. Depending on the specific field, certain experiments can have a large margin of error and/or noise due to real-world imperfections. This needs to be accounted for by the algorithm. 
-Certain materials space can be discontinous owing to large variance in functional properties, especially for structural problems like alloys, where various parameters can affect microstructure greatly. 
+6. Certain materials space can be discontinous owing to large variance in functional properties, especially for structural problems like alloys, where various parameters can affect microstructure greatly. 
