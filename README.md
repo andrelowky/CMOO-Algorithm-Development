@@ -1,4 +1,4 @@
-# Constrained-Multi-Objective-Optimization-for-Materials
+# Constrained-Multi-Objective-Optimization-for-Materials-Discovery
 
 This is a repository for notebooks on applying optimization to materials experimentation. Some considerations in mind for this context:
 1. We are often looking to optimize >1 conflicting objectives, which requires the algorithm to find the best set of solutions which balances the trade-offs, i.e. a Pareto optimal solution. This can be done via single-objective+scalarization optimization or multi-objective optimization.
