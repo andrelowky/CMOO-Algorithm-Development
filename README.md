@@ -12,4 +12,7 @@ This is a repository for notebooks on applying optimization to materials experim
 
 In our work here, we explore conceptually different approaches to optimization. Bayesian Optimization (BO) is considered a model-centric approach that leverages on predictive capabilities of a surrogate model, most commonly Gaussian processes (i.e. krigging) alongside an acqusition function to heuristically determine the next best point to evaluate based on a candidate pool that is stochastically generated. Evolutionary Algorithm (EA) is a data-centric approach instead, where a population of all known data points are considered in selection/crossover/mutation to propose new points to evaluate.
 
-https://www.techrxiv.org/articles/preprint/Bayesian_vs_Evolutionary_Optimisation_in_Exploring_Pareto_Fronts_for_Materials_Discovery/21154537
+Papers:
+* [Bayesian vs Evolutionary Optimisation in Exploring Pareto Fronts for Materials Discovery](https://www.techrxiv.org/articles/preprint/Bayesian_vs_Evolutionary_Optimisation_in_Exploring_Pareto_Fronts_for_Materials_Discovery/21154537)
+
+
