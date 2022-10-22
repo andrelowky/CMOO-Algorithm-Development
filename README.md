@@ -1,8 +1,11 @@
 # Constrained-Multi-Objective-Optimization-for-Materials-Discovery
 
 This is a repository for notebooks on applying optimization to materials experimentation. Some considerations in mind for this context:
-1. We are often looking to optimize >1 conflicting objectives, which requires the algorithm to find the best set of solutions which balances the trade-offs, i.e. a Pareto optimal solution. This can be done via single-objective+scalarization optimization or multi-objective optimization.
-2. Solutions may be restricted by certain constraints due to underlying material properties such as solubility limits or weight/molar balance. Every solution being proposed must be feasible, otherwise the material cannot exist. Optimization strategies need to account for this via constraint handling techniques within the optimization loop, or perform feasbility projection/repair for all candidates.
-3. Problems defined in materials experiments usually have a small evaluation budget due to practical limitations of precursor costs and experimental time, usually in the range of 10^0 to 10^2 data points.
-4. Parallelization/batch sampling is usually limited to a relatively small number of 2-12, based on engineering constraints in the high-throughput set up.
-5. Certain objectives may have large variance/noise due to low fidelity/resolution of the characterization tool. Noisy objectives need to be accounted for by the optimization algorithm. The materials space can even be discontinous owing to large variance in functional properties, especially for structural problems like alloys, where various experimental and environmental parameters can affect the microstructure greatly.
+
+1. We are  looking to simultaneously optimize multiple conflicting objectives, which means there exists a set of solutions which balances the trade-offs, i.e. a Pareto Front.
+2. The objective space can be non-smooth and discontinous, owing to complex physics and microstructure effects.
+3. Solutions are constrained by certain underlying properties like solubility limits or molar balance, which necessitates constraint handling techniques that allow for feasibility projection or repair operators.
+4. Dimensionality of such problems can be relatively high (m>4), depending on the choice of chemical descriptors or experimental parameters.
+5. Total evaluation budget is extremely limited due to practical limitations of experiment costs and time, generally in the range of 10^0 to 10^2 points.
+6. Automated high-throughput setups require algorithms to have batch sampling and evaluation frameworks integrated, from q=2 up to 96 for common industrial set-ups.
+7. Presence of noise/variance in observations due to imperfections in synthesis, or fidelity/resolution concerns in characterization, which affect quality of predictive models.
