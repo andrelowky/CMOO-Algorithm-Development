@@ -9,3 +9,7 @@ This is a repository for notebooks on applying optimization to materials experim
 5. Total evaluation budget is extremely limited due to practical limitations of experiment costs and time, generally in the range of 10^0 to 10^2 points.
 6. Automated high-throughput setups require algorithms to have batch sampling and evaluation frameworks integrated, from q=2 up to 96 for common industrial set-ups.
 7. Presence of noise/variance in observations due to imperfections in synthesis, or fidelity/resolution concerns in characterization, which affect quality of predictive models.
+
+In our work here, we explore conceptually different approaches to optimization. Bayesian Optimization (BO) is considered a model-centric approach that leverages on predictive capabilities of a surrogate model, most commonly Gaussian processes (i.e. krigging) alongside an acqusition function to heuristically determine the next best point to evaluate based on a candidate pool that is stochastically generated. Evolutionary Algorithm (EA) is a data-centric approach instead, where a population of all known data points are considered in selection/crossover/mutation to propose new points to evaluate.
+
+https://www.techrxiv.org/articles/preprint/Bayesian_vs_Evolutionary_Optimisation_in_Exploring_Pareto_Fronts_for_Materials_Discovery/21154537
