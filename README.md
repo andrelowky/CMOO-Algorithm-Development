@@ -1,5 +1,7 @@
 # Constrained-Multi-Objective-Optimization-for-Materials-Discovery
 
+Update: this is outdated and poorly written code, I have included a new subdirectory labelled MTBO which has the proper classes and scripts to use EBGO in a modular function. It is still incomplete so apologies for the trouble.
+
 This is a repository for notebooks on applying constrained multi-objective optimization to materials experimentation. 
 
 1. We explored conceptually different approaches to optimization, Bayesian Optimization (BO) and Evolutionary Algorithm (EA), using a newly proposed probability density plots as a means of visually analyzing and intepreting the sampling distribution of an algorithm across multiple runs.
