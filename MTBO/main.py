@@ -42,18 +42,17 @@ class MTBO():
 
 		self.random_state = random_state
 		self.n_init = n_init
-		#self.init_x, self.init_task, self.init_y = anchored_sampling(self.problems, n_init, self.random_state)
-	
+		self.init_x = draw_sobol_samples(bounds=self.prob_bounds, n=self.n_init, q=1).squeeze(1)
+	 	self.init_y = self.problem.evaluate(self.init_x)
+		
 	def run(self, n_iter, n_batch, 
 			task_type, algo,
 		   ):
 		print(f"Optimizing for {task_type}-{algo}")
 
-		self.did_validation = False
 		self.task_type = task_type
 		self.run_iter = n_iter
 		self.run_batch = n_batch
-		self.losses = []
 
 		torch.manual_seed(self.random_state)
 		np.random.seed(self.random_state)
@@ -72,45 +71,33 @@ class MTBO():
 			t2 = time.monotonic()
 		
 			if task_type == 'single':
-				if n_batch < self.n_task:
-					raise Exception(f"Batch size too small for fixed sampling! Need at least {self.n_task}.")
-
-				if n_batch % self.n_task != 0:
-					raise Exception(f"Batch size should be an even number wrt to {self.n_task} tasks.")
-
-				n_batch_per_task = int(n_batch/self.n_task)
 
 				new_x = []
-				all_losses = []
 				for i in range(self.n_task):
 					
 					if algo == 'random':
-						model, acq = None, None
-						all_losses.append(0)
 						new_x_i = draw_sobol_samples(bounds=self.prob_bounds, 
 													 n=n_batch_per_task, q=1).squeeze(1)	
 
 						new_x.append(new_x_i.cpu().numpy())
 
 					else:
-						x_gp_i = self.x_gp[(self.train_task==i).all(dim=1)]
-						train_y_i = self.train_y[(self.train_task==i).all(dim=1)]
-		
-						model, mll = initialize_model_st(x_gp_i, train_y_i)
+
+						model, mll = initialize_model_st(self.x_gp, self.train_y)
 						fit_gpytorch_mll(mll)
 						all_losses.append(calc_losses(model, mll))
 	
 						if algo == 'qnehvi':
-							acq = st_qnehvi(model, self.ref_pt, x_gp_i)
-							candidates = optimize_st_acqf(acq, n_batch_per_task, self.std_bounds)
+							acq = st_qnehvi(model, self.ref_pt, self.x_gp)
+							candidates = optimize_st_acqf(acq, n_batch, self.std_bounds)
 						elif algo == 'qnehvi-egbo':
-							acq = st_qnehvi(model, self.ref_pt, x_gp_i)
-							candidates = optimize_st_egbo(acq, x_gp_i, train_y_i, n_batch_per_task)
+							acq = st_qnehvi(model, self.ref_pt, self.x_gp)
+							candidates = optimize_st_egbo(acq, self.x_gp, self.train_y, n_batch)
 						elif algo == 'qnparego':
-							acq = st_qnparego(model, x_gp_i, n_batch_per_task, self.n_obj)
+							acq = st_qnparego(model, self.x_gp, n_batch, self.n_obj)
 							candidates = optimize_st_list(acq, self.std_bounds)
 						elif algo == 'qucb':
-							acq = st_qucb(model, x_gp_i, n_batch_per_task, self.n_obj)
+							acq = st_qucb(model, self.x_gp, n_batch, self.n_obj)
 							candidates = optimize_st_list(acq, self.std_bounds)
 		
 						new_x.append(unnormalize(candidates, self.prob_bounds).cpu().numpy())
@@ -118,14 +105,14 @@ class MTBO():
 				self.losses.append(np.array(all_losses).mean(axis=0))
 			
 				new_x = torch.tensor(np.array(new_x), **tkwargs).reshape(-1, self.n_var)
-				new_task = torch.tensor([np.array(task).repeat(n_batch_per_task) for task in range(self.n_task)], **tkwargs).reshape(-1).unsqueeze(1)
 
 			#### update and go next iteration
-			'''
-            self.train_x, self.train_task, self.train_y = update_values(
-				(self.train_x, self.train_task, self.train_y), 
-				(new_x, new_task), self.problems)
-            '''
+
+			new_y = self.problem.evaluate(new_x)
+
+			self.train_x = torch.vstack([self.train_x, new_x])
+			self.train_y = torch.vstack([self.train_y, new_y])
+
 			self.x_gp = normalize(self.train_x, self.prob_bounds)   
 
 			volumes = calc_hv(self.train_y, self.hv)
