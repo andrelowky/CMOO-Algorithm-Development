@@ -71,40 +71,29 @@ class MTBO():
 			t2 = time.monotonic()
 		
 			if task_type == 'single':
-
-				new_x = []
-				for i in range(self.n_task):
 					
-					if algo == 'random':
-						new_x_i = draw_sobol_samples(bounds=self.prob_bounds, 
-													 n=n_batch_per_task, q=1).squeeze(1)	
+				if algo == 'random':
+					candidates = draw_sobol_samples(bounds=self.std_bounds, n=n_batch, q=1).squeeze(1)	
 
-						new_x.append(new_x_i.cpu().numpy())
+				else:
 
-					else:
+					model, mll = initialize_model_st(self.x_gp, self.train_y)
+					fit_gpytorch_mll(mll)
 
-						model, mll = initialize_model_st(self.x_gp, self.train_y)
-						fit_gpytorch_mll(mll)
-						all_losses.append(calc_losses(model, mll))
-	
-						if algo == 'qnehvi':
-							acq = st_qnehvi(model, self.ref_pt, self.x_gp)
-							candidates = optimize_st_acqf(acq, n_batch, self.std_bounds)
-						elif algo == 'qnehvi-egbo':
-							acq = st_qnehvi(model, self.ref_pt, self.x_gp)
-							candidates = optimize_st_egbo(acq, self.x_gp, self.train_y, n_batch)
-						elif algo == 'qnparego':
-							acq = st_qnparego(model, self.x_gp, n_batch, self.n_obj)
-							candidates = optimize_st_list(acq, self.std_bounds)
-						elif algo == 'qucb':
-							acq = st_qucb(model, self.x_gp, n_batch, self.n_obj)
-							candidates = optimize_st_list(acq, self.std_bounds)
+					if algo == 'qnehvi':
+						acq = st_qnehvi(model, self.ref_pt, self.x_gp)
+						candidates = optimize_st_acqf(acq, n_batch, self.std_bounds)
+					elif algo == 'qnehvi-egbo':
+						acq = st_qnehvi(model, self.ref_pt, self.x_gp)
+						candidates = optimize_st_egbo(acq, self.x_gp, self.train_y, n_batch)
+					elif algo == 'qnparego':
+						acq = st_qnparego(model, self.x_gp, n_batch, self.n_obj)
+						candidates = optimize_st_list(acq, self.std_bounds)
+					elif algo == 'qucb':
+						acq = st_qucb(model, self.x_gp, n_batch, self.n_obj)
+						candidates = optimize_st_list(acq, self.std_bounds)
 		
-						new_x.append(unnormalize(candidates, self.prob_bounds).cpu().numpy())
-
-				self.losses.append(np.array(all_losses).mean(axis=0))
-			
-				new_x = torch.tensor(np.array(new_x), **tkwargs).reshape(-1, self.n_var)
+				new_x = unnormalize(candidates, self.prob_bounds)
 
 			#### update and go next iteration
 
@@ -131,7 +120,7 @@ class MTBO():
 		df_x = pd.DataFrame(self.train_x.cpu().numpy(), columns=[f"x{x}" for x in range(self.n_var)])
 		df_y = pd.DataFrame(self.train_y.cpu().numpy(), columns=[f"y{x}" for x in range(self.n_obj)])
 
-        df_iter = pd.DataFrame(np.concatenate(
+       		df_iter = pd.DataFrame(np.concatenate(
             [np.repeat(0, self.n_init),
              np.repeat(np.arange(self.run_iter)+1, self.run_batch),]), columns=['Iteration'])
         
