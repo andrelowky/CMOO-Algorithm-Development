@@ -9,9 +9,7 @@ from botorch.utils.multi_objective.hypervolume import Hypervolume
 from botorch import fit_gpytorch_mll
 from botorch.utils.sampling import draw_sobol_samples
 
-
-#from MTBO.sampling import anchored_sampling
-#from MTBO.utils import calc_hv, update_values, calc_losses
+from MTBO.utils import calc_hv
 from MTBO.models import initialize_model_st
 from MTBO.acq_func import st_qnehvi, st_qnparego, st_qucb
 from MTBO.optim import optimize_st_list,  optimize_st_acqf, optimize_st_egbo
@@ -62,7 +60,7 @@ class MTBO():
 		self.train_x, self.train_y = self.init_x, self.init_y
 		self.x_gp = normalize(self.train_x, self.prob_bounds)   
 
-		volumes = calc_hv(self.train_y, self.hv)
+		volumes = calc_hv(self.train_y, self.hv, self.problem)
 		self.results.append(volumes)
 		
 		print(f"Batch 0 - avg HV:{volumes.mean():.4f}")
@@ -104,7 +102,7 @@ class MTBO():
 
 			self.x_gp = normalize(self.train_x, self.prob_bounds)   
 
-			volumes = calc_hv(self.train_y, self.hv)
+			volumes = calc_hv(self.train_y, self.hv, self.problem)
 			self.results.append(volumes)
 			
 			t3 = time.monotonic()
