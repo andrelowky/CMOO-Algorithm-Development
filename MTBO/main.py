@@ -127,12 +127,9 @@ class MTBO():
 
 		df_all = pd.concat([df_x, df_y, df_iter], axis=1)
 
-		losses_results = self.losses
-		
-		return hv_results, df_all, losses_results
+		return hv_results, df_all
 
 	def reset(self):
 		self.results = []
 		self.train_x = None
-		self.train_task = None
 		self.train_y = None
