@@ -1,6 +1,6 @@
 # Constrained-Multi-Objective-Optimization-for-Materials-Discovery
 
-Update: this is outdated and poorly written code, I have included a new subdirectory labelled MTBO which has the proper classes and scripts to use EBGO in a modular function. It is still incomplete so apologies for the trouble.
+Update: this is outdated and poorly written code, I have included a new subdirectory labelled MTBO which has the proper classes and scripts to use EBGO in a modular function. This will eventually be a separate repo of its own when the package is complete.
 
 This is a repository for notebooks on applying constrained multi-objective optimization to materials experimentation. 
 
