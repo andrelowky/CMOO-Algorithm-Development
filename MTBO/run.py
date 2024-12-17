@@ -15,13 +15,14 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
 from MTBO.main import MTBO
-#from MTBO.problems import DTLZ1, DTLZ2, ZDT1, ZDT2
+from MTBO.problems import ZDT1, ZDT2, ZDT3
 
 main_dir = os.getcwd()
 
 def main(args):
-	
-	opt = MTBO(problem_list)
+
+	problem = ZDT1(n_var=args.n_var)
+	opt = MTBO(problem)
 
 	all_results = {}
 	all_data = {}
@@ -58,7 +59,7 @@ def main(args):
 			all_data[f"{task_type}-{algo}"].append(data)
 			all_losses[f"{task_type}-{algo}"].append(losses)
 
-	run_info = {'problem_name': 'ZDT12',
+	run_info = {'problem_name': 'ZDT1',
 				'n_var': args.n_var,
 				'n_iter': args.n_iter,
 				'n_batch': args.n_batch,
@@ -82,7 +83,6 @@ if __name__ == '__main__':
 	parser.add_argument('--n_iter', default=1, type=int)
 	parser.add_argument('--n_batch', default=4, type=int)
 	parser.add_argument('--n_init', default=32, type=int)
-	parser.add_argument('--n_batch_final', default=2, type=int)
 		
 	parser.add_argument('--label', default='', type=str)
 	
